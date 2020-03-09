@@ -41,6 +41,23 @@
             list-type="picture-card"
             :on-preview="handlePictureCardPreview"
             :on-remove="handleRemove"
+            :on-change="uploadThumbFile"
+            :multiple="uploadMultiple"
+            name="file"
+          >
+            <i class="el-icon-plus" />
+          </el-upload>
+        </el-col>
+      </el-row>
+      <br>
+      <el-row :gutter="20">
+        <el-col :span="8">
+          <label>选择详情图</label>
+          <el-upload
+            :action="thumbPostUrl"
+            list-type="picture-card"
+            :on-preview="handlePictureCardPreview"
+            :on-remove="handleRemove"
             :on-change="uploadChange"
             :multiple="uploadMultiple"
             name="file"
@@ -112,7 +129,8 @@ export default {
       basePrice: 0,
       inputPrice: 0,
       showPrice: 0,
-      uploadFileList: [],
+      uploadFileList: [], // 详情图 多个
+      uploadThumb: '', // 缩略图片
       uploadMultiple: true,
       thumbPostUrl: 'http://localhost:8081/upload/singleImage'
     }
@@ -136,7 +154,11 @@ export default {
       }
     },
     submit() {
-      // eslint-disable-next-line no-unused-vars
+      const thumb = []
+      for (let i = 0; i < this.uploadThumb.length; i++) {
+        thumb[i] = this.uploadThumb[i].response.data.path
+      }
+      // eslint-disable-next-line no-unused-vars,no-unreachable
       const images = []
       for (let i = 0; i < this.uploadFileList.length; i++) {
         images[i] = this.uploadFileList[i].response.data.path
@@ -150,6 +172,7 @@ export default {
         'title': this.title,
         'subTitle': this.subTitle,
         'images': images,
+        'thumb': thumb,
         'status': this.status,
         'basePrice': this.basePrice,
         'inputPrice': this.inputPrice,
@@ -180,6 +203,10 @@ export default {
       console.log(fileList)
       this.uploadFileList = fileList
       console.log(this.uploadFileList)
+    },
+    uploadThumbFile(file, fileList) {
+      console.log(fileList)
+      this.uploadThumb = fileList
     }
   }
 }

@@ -41,6 +41,24 @@
             list-type="picture-card"
             :on-preview="handlePictureCardPreview"
             :on-remove="handleRemove"
+            :on-change="uploadThumbFile"
+            :multiple="uploadMultiple"
+            :file-list="uploadThumb"
+            name="file"
+          >
+            <i class="el-icon-plus" />
+          </el-upload>
+        </el-col>
+      </el-row>
+      <br>
+      <el-row :gutter="20">
+        <el-col :span="8">
+          <label>选择详情图</label>
+          <el-upload
+            :action="thumbPostUrl"
+            list-type="picture-card"
+            :on-preview="handlePictureCardPreview"
+            :on-remove="handleRemove"
             :on-change="uploadChange"
             :multiple="uploadMultiple"
             :file-list="uploadFileList"
@@ -113,7 +131,8 @@ export default {
       basePrice: 0,
       inputPrice: 0,
       showPrice: 0,
-      uploadFileList: [],
+      uploadFileList: [], // 详情图 多个
+      uploadThumb: [], // 缩略图片
       uploadMultiple: true,
       thumbPostUrl: 'http://localhost:8081/upload/singleImage'
     }
@@ -154,9 +173,17 @@ export default {
           const images = JSON.parse(data.images)
           const FileList = []
           images.forEach(function(item, index) {
-            FileList[index] = { 'url': item }
+            FileList[index] = { 'url': process.env.VUE_APP_BASE_DOMAIN + item }
+          })
+          // 缩略图
+          const thumbJson = JSON.parse(data.thumb)
+          const thumbFileList = []
+          thumbJson.forEach(function(item, index) {
+            thumbFileList[index] = { 'url': process.env.VUE_APP_BASE_DOMAIN + item }
           })
           this.uploadFileList = FileList
+
+          this.uploadThumb = thumbFileList
         }
       })
     }
@@ -180,6 +207,11 @@ export default {
       for (let i = 0; i < this.uploadFileList.length; i++) {
         images[i] = this.uploadFileList[i].response.data.path
       }
+
+      const thumb = []
+      for (let i = 0; i < this.uploadFileList.length; i++) {
+        thumb[i] = this.uploadFileList[i].response.data.path
+      }
       console.log(images)
       // eslint-disable-next-line no-unreachable
       const category = {
@@ -189,6 +221,7 @@ export default {
         'title': this.title,
         'subTitle': this.subTitle,
         'images': images,
+        'thumb': thumb,
         'status': this.status,
         'basePrice': this.basePrice,
         'inputPrice': this.inputPrice,
@@ -219,6 +252,11 @@ export default {
       console.log(fileList)
       this.uploadFileList = fileList
       console.log(this.uploadFileList)
+    },
+    uploadThumbFile(file, fileList) {
+      console.log(fileList)
+      this.uploadThumb = fileList
+      console.log(this.uploadThumb)
     }
   }
 }
