@@ -1,4 +1,4 @@
-import Cookies from 'js-cookie'
+// import Cookies from 'js-cookie'
 
 const TokenKey = 'Admin-Token'
 
@@ -13,5 +13,6 @@ export function setToken(token) {
 }
 
 export function removeToken() {
-  return Cookies.remove(TokenKey)
+  return localStorage.removeItem(TokenKey)
+  // return Cookies.remove(TokenKey)
 }
