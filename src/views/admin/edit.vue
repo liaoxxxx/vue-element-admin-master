@@ -4,7 +4,7 @@
     <div id="goods-info-group">
       <el-row :gutter="20">
         <el-col :span="6">
-          <label for="">管理员头像:</label><el-upload
+          <label >管理员头像:</label><el-upload
             class="avatar-uploader"
             action="https://jsonplaceholder.typicode.com/posts/"
             :show-file-list="false"
@@ -86,32 +86,15 @@ export default {
   },
   methods: {
     submit() {
-      // eslint-disable-next-line no-unused-vars
-      const images = []
-      for (let i = 0; i < this.uploadFileList.length; i++) {
-        images[i] = this.uploadFileList[i].response.data.path
+      const admin = {
+        id: this.id,
+        username: this.username,
+        nickname: this.nickname,
+        avatars: this.avatars,
+        status: this.status
       }
-
-      const thumb = []
-      for (let i = 0; i < this.uploadFileList.length; i++) {
-        thumb[i] = this.uploadFileList[i].response.data.path
-      }
-      console.log(images)
-      // eslint-disable-next-line no-unreachable
-      const category = {
-        'name': this.name,
-        'cateId': this.cateId,
-        'summary': this.summary,
-        'title': this.title,
-        'subTitle': this.subTitle,
-        'images': images,
-        'thumb': thumb,
-        'status': this.status,
-        'basePrice': this.basePrice,
-        'inputPrice': this.inputPrice,
-        'showPrice': this.showPrice
-      }
-      this.$request.post('/admin_goods/add_goods/', category).then((res) => {
+      console.table(admin)
+      this.$request.post('/admin/edit/', admin).then((res) => {
         res = res.data
         console.log(res)
         console.log(res.msg)
@@ -122,15 +105,19 @@ export default {
             message: res.message,
             type: 'success'
           })
+          this.$router.back()
         }
       })
     },
     handleRemove(file, fileList) {
       console.log(fileList)
     },
-    handlePictureCardPreview(file) {
+    handleAvatarSuccess(file) {
       this.dialogImageUrl = file.url
       this.dialogVisible = true
+    },
+    beforeAvatarUpload() {
+      console.log(9999)
     },
     uploadChange(file, fileList) {
       console.log(fileList)
