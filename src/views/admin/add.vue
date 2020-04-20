@@ -1,151 +1,48 @@
 <template>
-  <div class="add-category-container">
-    <h2>添加产品</h2>
-    <div v-show="showInfoGroup" id="goods-info-group">
-      <h3>商品摘要</h3>
-      <el-row :gutter="20">
-        <el-col :span="8">
-          <label for="Name">商品名称:</label><el-input id="Name" v-model="name" placeholder="请输入商品名称" />
-        </el-col>
+  <div>
+    <el-dialog v-el-drag-dialog :visible.sync="addAdminDialogVisible" title="添加管理员" :fullscreen="false" @dragDialog="handleDrag">
+      <el-row :gutter="24">
+        <el-form ref="form" label-width="80px">
+          <el-form-item label="用户名">
+            <el-input v-model="adminObj.username" placeholder="管理员用户名" />
+          </el-form-item>
+          <el-form-item label="昵称">
+            <el-input v-model="adminObj.nickname" placeholder="管理员昵称" />
+          </el-form-item>
+          <el-form-item label="密码">
+            <el-input v-model="adminObj.password" placeholder="管理员密码" />
+          </el-form-item>
+          <el-form-item label="审核">
+            <el-switch v-model="adminObj.status" active-text="启用" inactive-text="禁用" />
+          </el-form-item>
+          <el-form-item label="设为超管">
+            <el-switch v-model="adminObj.isAdministrator" active-text="是" inactive-text="否" />
+          </el-form-item>
+          <el-form-item>
+            <el-button size="small" type="primary" @click="addAdmin">添加</el-button>
+          </el-form-item>
+        </el-form>
       </el-row>
-      <br>
-      <el-row :gutter="20">
-        <el-col :span="8">
-          <label for="title">商品标题:</label><el-input id="title" v-model="title" placeholder="请输入商品名称" />
-        </el-col>
-      </el-row>
-      <br>
-      <el-row :gutter="20">
-        <el-col :span="8">
-          <label for="subTitle">商品副标题:</label><el-input id="subTitle" v-model="subTitle" placeholder="请输入商品备注" />
-        </el-col>
-      </el-row>
-      <br>
-      <el-row :gutter="20">
-        <el-col :span="8">
-          <label for="summary">商品备注:</label><el-input id="summary" v-model="summary" placeholder="请输入商品备注" />
-        </el-col>
-      </el-row>
-      <br>
-      <el-row :gutter="20">
-        <el-col :span="8">
-          <label for="cateId">选择商品分类:</label><el-input id="cateId" v-model="cateId" placeholder="请选择商品分类" />
-        </el-col>
-      </el-row>
-      <br>
-      <el-row :gutter="20">
-        <el-col :span="8">
-          <label>选择缩略图</label>
-          <el-upload
-            :action="thumbPostUrl"
-            list-type="picture-card"
-            :on-preview="handlePictureCardPreview"
-            :on-remove="handleRemove"
-            :on-change="uploadThumbFile"
-            :multiple="uploadMultiple"
-            name="file"
-          >
-            <i class="el-icon-plus" />
-          </el-upload>
-        </el-col>
-      </el-row>
-      <br>
-      <el-row :gutter="20">
-        <el-col :span="8">
-          <label>选择详情图</label>
-          <el-upload
-            :action="thumbPostUrl"
-            list-type="picture-card"
-            :on-preview="handlePictureCardPreview"
-            :on-remove="handleRemove"
-            :on-change="uploadChange"
-            :multiple="uploadMultiple"
-            name="file"
-          >
-            <i class="el-icon-plus" />
-          </el-upload>
-        </el-col>
-      </el-row>
-      <br>
-    </div>
-    <div v-show="!showInfoGroup" id="goods-detail-group">
-      <el-row :gutter="20">
-        <el-col :span="8">
-          <label for="basePrice">商品底价:</label><el-input id="basePrice" v-model="basePrice" placeholder="请输入商品备注" />
-        </el-col>
-      </el-row>
-      <br>
-      <el-row :gutter="20">
-        <el-col :span="8">
-          <label for="showPrice">商品标价:</label><el-input id="showPrice" v-model="showPrice" placeholder="请输入商品备注" />
-        </el-col>
-      </el-row>
-      <br>
-      <el-row :gutter="20">
-        <el-col :span="8">
-          <label for="inputPrice">商品成本:</label><el-input id="inputPrice" v-model="inputPrice" placeholder="请输入商品备注" />
-        </el-col>
-      </el-row>
-      <br>
-      <el-row :gutter="20">
-        <el-col :span="8">
-          <label>上架状态</label>
-          <el-radio-group id="status" v-model="status">
-            <el-radio :label="0">下架</el-radio>
-            <el-radio :label="1">上架</el-radio>
-          </el-radio-group>
-        </el-col>
-      </el-row>
-      <br>
-    </div>
-    <div v-show="!showInfoGroup" id="goods-price-group">
-      <el-row :gutter="20">
-        <el-col :span="8">
-          <label for="basePrice">商品属性:</label><el-input id="Price" v-model="basePrice" placeholder="请输入商品备注" />
-        </el-col>
-      </el-row>
-      <el-row :gutter="20">
-        <el-col :span="8">
-          <label for="basePrice">商品属性:</label><el-input id="Price" v-model="basePrice" placeholder="请输入商品备注" />
-        </el-col>
-      </el-row>
-      <br>
-    </div>
-    <el-row :gutter="20">
-      <el-col v-show="!showInfoGroup" :span="2">
-        <el-button type="primary" @click="switchInputGroups">上一步</el-button>
-      </el-col>
-      <el-col v-show="showInfoGroup" :span="2">
-        <el-button type="primary" @click="switchInputGroups">下一步</el-button>
-      </el-col>
-      <el-col v-show="!showInfoGroup" :span="8">
-        <el-button type="primary" @click="submit">提交</el-button>
-      </el-col>
-    </el-row>
+    </el-dialog>
   </div>
 </template>
 
 <script>
+import elDragDialog from '@/directive/el-drag-dialog' // base on element-ui
 export default {
-  name: 'AddGoods',
+  directives: { elDragDialog },
+  // eslint-disable-next-line vue/require-prop-types
+  props: ['addAdminDialogVisible'],
   data() {
     return {
-      showInfoGroup: true,
-      dialogImageUrl: '',
-      dialogVisible: false,
-      name: '',
-      cateId: '',
-      summary: '',
-      title: '',
-      subTitle: '',
-      status: 1,
-      basePrice: 0,
-      inputPrice: 0,
-      showPrice: 0,
-      uploadFileList: [], // 详情图 多个
-      uploadThumb: '', // 缩略图片
-      uploadMultiple: true,
-      thumbPostUrl: 'http://localhost:8081/upload/singleImage'
+      adminObj: {
+        username: '',
+        password: '',
+        status: true,
+        nickname: '',
+        isAdministrator: false
+      }
+      // eslint-disable-next-line vue/no-dupe-keys
     }
   },
   watch: {
@@ -159,39 +56,19 @@ export default {
     // window.removeEventListener('storage', this.afterQRScan)
   },
   methods: {
-    switchInputGroups() {
-      if (this.showInfoGroup === true) {
-        this.showInfoGroup = false
+    addAdmin() {
+      if (this.adminObj.status === true) {
+        this.adminObj.status = 1
       } else {
-        this.showInfoGroup = true
+        this.adminObj.status = 0
       }
-    },
-    submit() {
-      const thumb = []
-      for (let i = 0; i < this.uploadThumb.length; i++) {
-        thumb[i] = this.uploadThumb[i].response.data.path
+
+      if (this.adminObj.isAdministrator === true) {
+        this.adminObj.isAdministrator = 1
+      } else {
+        this.adminObj.isAdministrator = 0
       }
-      // eslint-disable-next-line no-unused-vars,no-unreachable
-      const images = []
-      for (let i = 0; i < this.uploadFileList.length; i++) {
-        images[i] = this.uploadFileList[i].response.data.path
-      }
-      console.log(images)
-      // eslint-disable-next-line no-unreachable
-      const category = {
-        'name': this.name,
-        'cateId': this.cateId,
-        'summary': this.summary,
-        'title': this.title,
-        'subTitle': this.subTitle,
-        'images': images,
-        'thumb': thumb,
-        'status': this.status,
-        'basePrice': this.basePrice,
-        'inputPrice': this.inputPrice,
-        'showPrice': this.showPrice
-      }
-      this.$request.post('/admin_goods/add_goods/', category).then((res) => {
+      this.$request.post('/admin/add/', this.adminObj).then((res) => {
         res = res.data
         console.log(res)
         console.log(res.msg)
@@ -205,21 +82,8 @@ export default {
         }
       })
     },
-    handleRemove(file, fileList) {
-      console.log(fileList)
-    },
-    handlePictureCardPreview(file) {
-      this.dialogImageUrl = file.url
-      this.dialogVisible = true
-    },
-    uploadChange(file, fileList) {
-      console.log(fileList)
-      this.uploadFileList = fileList
-      console.log(this.uploadFileList)
-    },
-    uploadThumbFile(file, fileList) {
-      console.log(fileList)
-      this.uploadThumb = fileList
+    handleDrag() {
+      this.$refs.select.blur()
     }
   }
 }

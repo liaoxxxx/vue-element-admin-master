@@ -1,6 +1,6 @@
 <template>
-  <div class="login-container">
-    <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal" @select="handleSelect">
+  <div class="admin-container">
+    <el-menu class="el-menu-demo" mode="horizontal">
       <el-menu-item index="1">
         <el-button
           size="small"
@@ -10,20 +10,21 @@
           添加管理员
         </el-button>
       </el-menu-item>
-      <el-submenu index="2">
-        <template slot="title">我的工作台</template>
-        <el-menu-item index="2-1">选项1</el-menu-item>
-        <el-menu-item index="2-2">选项2</el-menu-item>
-        <el-menu-item index="2-3">选项3</el-menu-item>
-        <el-submenu index="2-4">
-          <template slot="title">选项4</template>
-          <el-menu-item index="2-4-1">选项1</el-menu-item>
-          <el-menu-item index="2-4-2">选项2</el-menu-item>
-          <el-menu-item index="2-4-3">选项3</el-menu-item>
-        </el-submenu>
-      </el-submenu>
-      <el-menu-item index="3" disabled>消息中心</el-menu-item>
-      <el-menu-item index="4"><a href="https://www.ele.me" target="_blank">订单管理</a></el-menu-item>
+      <el-menu-item index="2">
+        <el-input v-model="usernameSearch" placeholder="请输入用户名" />
+      </el-menu-item>
+      <el-menu-item index="2">
+        <el-input v-model="usernameSearch" placeholder="请输入昵称" />
+      </el-menu-item>
+      <el-menu-item index="4">
+        <el-button
+          size="small"
+          type="primary"
+          @click="searchAdmin()"
+        >
+          筛选
+        </el-button>
+      </el-menu-item>
     </el-menu>
     <el-table
       ref="multipleTable"
@@ -96,23 +97,34 @@
         @current-change="handleCurrentChange"
       />
     </div>
-    <div class="add-admin-dialog">
-      <el-dialog v-el-drag-dialog :visible.sync="addAdminDialogVisible" :fullscreen="true" title="添加管理员">
-        <el-input>
-          ddd
-        </el-input>
-      </el-dialog>
-    </div>
+    <AddAdmin :add-admin-dialog-visible="addAdminDialogVisible" />
+    <!-- <EditAdmin :add-admin-dialog-visible="editAdminDialogVisible" />-->
   </div>
 </template>
 <script>
+import AddAdmin from './add.vue'
+// import EditAdmin from './edit'
 export default {
   name: 'AdminList',
+  components: {
+    'AddAdmin': AddAdmin
+    /* 'EditAdmin': EditAdmin*/
+  },
   data() {
     return {
       tableData: [],
       currentPage: 1,
-      addAdminDialogVisible: false
+      addAdminDialogVisible: false,
+      editAdminDialogVisible: false,
+      activeIndex: true,
+      usernameSearch: ''
+      /*  adminObj: {
+        username: '',
+        password: '',
+        status: true,
+        nickname: '',
+        isAdministrator: true
+      }*/
     }
   },
   watch: {
@@ -142,6 +154,9 @@ export default {
     edit(id) {
       this.$router.push({ path: '/admin/edit', query: { id: id }})
     },
+    addAdmin() {
+      console.log('aaa')
+    },
     showAdminDialog() {
       this.addAdminDialogVisible = true
     },
@@ -159,8 +174,23 @@ export default {
     },
     handleCurrentChange() {
       console.log('aaa')
+    },
+    searchAdmin() {
+      console.log(this.$request.defaults.headers)
+      this.$request.get('/admin/list').then((res) => {
+        res = res.data
+        console.log(res)
+        if (res.status === 1) {
+          this.tableData = res.data
+          /*  for (let i = 0; i < this.tableData.length; i++) {
+            const createdDate = new Date(this.tableData[i].createdAt)
+            const updatedDate = new Date(this.tableData[i].updatedAt)
+            this.tableData[i].createdAt = createdDate.getFullYear() + '-' + createdDate.getUTCMonth() + '-' + createdDate.getUTCDay() + ' ' + createdDate.getUTCHours() + ':' + createdDate.getUTCMinutes() + ':' + createdDate.getUTCSeconds()
+            this.tableData[i].updatedAt = updatedDate.getFullYear() + '-' + updatedDate.getUTCMonth() + '-' + updatedDate.getUTCDay() + ' ' + updatedDate.getUTCHours() + ':' + updatedDate.getUTCMinutes() + ':' + updatedDate.getUTCSeconds()
+          }*/
+        }
+      })
     }
-
   }
 }
 </script>

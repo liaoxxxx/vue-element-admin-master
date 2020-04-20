@@ -4,7 +4,7 @@
     <div id="goods-info-group">
       <el-row :gutter="20">
         <el-col :span="6">
-          <label >管理员头像:</label><el-upload
+          <label>管理员头像:</label><el-upload
             class="avatar-uploader"
             action="https://jsonplaceholder.typicode.com/posts/"
             :show-file-list="false"

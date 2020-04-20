@@ -186,12 +186,12 @@ export const asyncRoutes = [
         name: 'list',
         meta: { title: '管理员列表', icon: 'tab' }
       },
-      {
+      /* {
         path: 'add',
         component: () => import('@/views/admin/add'),
         name: 'Icons',
         meta: { title: '添加管理员', icon: 'tab', noCache: true }
-      },
+      },*/
       {
         path: 'edit',
         component: () => import('@/views/admin/edit'),

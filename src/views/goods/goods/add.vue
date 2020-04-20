@@ -1,116 +1,111 @@
 <template>
   <div class="add-category-container">
-    <h2>添加产品</h2>
-    <div v-show="showInfoGroup" id="goods-info-group">
-      <h3>商品摘要</h3>
-      <el-row :gutter="20">
-        <el-col :span="8">
-          <label for="Name">商品名称:</label><el-input id="Name" v-model="name" placeholder="请输入商品名称" />
-        </el-col>
-      </el-row>
-      <br>
-      <el-row :gutter="20">
-        <el-col :span="8">
-          <label for="title">商品标题:</label><el-input id="title" v-model="title" placeholder="请输入商品名称" />
-        </el-col>
-      </el-row>
-      <br>
-      <el-row :gutter="20">
-        <el-col :span="8">
-          <label for="subTitle">商品副标题:</label><el-input id="subTitle" v-model="subTitle" placeholder="请输入商品备注" />
-        </el-col>
-      </el-row>
-      <br>
-      <el-row :gutter="20">
-        <el-col :span="8">
-          <label for="summary">商品备注:</label><el-input id="summary" v-model="summary" placeholder="请输入商品备注" />
-        </el-col>
-      </el-row>
-      <br>
-      <el-row :gutter="20">
-        <el-col :span="8">
-          <label for="cateId">选择商品分类:</label><el-input id="cateId" v-model="cateId" placeholder="请选择商品分类" />
-        </el-col>
-      </el-row>
-      <br>
-      <el-row :gutter="20">
-        <el-col :span="8">
-          <label>选择缩略图</label>
-          <el-upload
-            :action="thumbPostUrl"
-            list-type="picture-card"
-            :on-preview="handlePictureCardPreview"
-            :on-remove="handleRemove"
-            :on-change="uploadThumbFile"
-            :multiple="uploadMultiple"
-            name="file"
-          >
-            <i class="el-icon-plus" />
-          </el-upload>
-        </el-col>
-      </el-row>
-      <br>
-      <el-row :gutter="20">
-        <el-col :span="8">
-          <label>选择详情图</label>
-          <el-upload
-            :action="thumbPostUrl"
-            list-type="picture-card"
-            :on-preview="handlePictureCardPreview"
-            :on-remove="handleRemove"
-            :on-change="uploadChange"
-            :multiple="uploadMultiple"
-            name="file"
-          >
-            <i class="el-icon-plus" />
-          </el-upload>
-        </el-col>
-      </el-row>
-      <br>
-    </div>
-    <div v-show="!showInfoGroup" id="goods-detail-group">
-      <el-row :gutter="20">
-        <el-col :span="8">
-          <label for="basePrice">商品底价:</label><el-input id="basePrice" v-model="basePrice" placeholder="请输入商品备注" />
-        </el-col>
-      </el-row>
-      <br>
-      <el-row :gutter="20">
-        <el-col :span="8">
-          <label for="showPrice">商品标价:</label><el-input id="showPrice" v-model="showPrice" placeholder="请输入商品备注" />
-        </el-col>
-      </el-row>
-      <br>
-      <el-row :gutter="20">
-        <el-col :span="8">
-          <label for="inputPrice">商品成本:</label><el-input id="inputPrice" v-model="inputPrice" placeholder="请输入商品备注" />
-        </el-col>
-      </el-row>
-      <br>
-      <el-row :gutter="20">
-        <el-col :span="8">
-          <label>上架状态</label>
-          <el-radio-group id="status" v-model="status">
-            <el-radio :label="0">下架</el-radio>
-            <el-radio :label="1">上架</el-radio>
-          </el-radio-group>
-        </el-col>
-      </el-row>
-      <br>
-    </div>
-    <div v-show="!showInfoGroup" id="goods-price-group">
-      <el-row :gutter="20">
-        <el-col :span="8">
-          <label for="basePrice">商品属性:</label><el-input id="Price" v-model="basePrice" placeholder="请输入商品备注" />
-        </el-col>
-      </el-row>
-      <el-row :gutter="20">
-        <el-col :span="8">
-          <label for="basePrice">商品属性:</label><el-input id="Price" v-model="basePrice" placeholder="请输入商品备注" />
-        </el-col>
-      </el-row>
-      <br>
-    </div>
+    <el-tabs v-model="activeIndex" @tab-click="handleTabClick">
+      <el-tab-pane label="商品摘要" name="first" class="goods-price-group">
+        <el-row :gutter="20">
+          <el-col :span="8"><label for="Name">商品名称:</label>
+            <el-input id="Name" v-model="name" placeholder="请输入商品名称" />
+          </el-col>
+        </el-row>
+        <br>
+        <el-row :gutter="20">
+          <el-col :span="8">
+            <label for="title">商品标题:</label><el-input id="title" v-model="title" placeholder="请输入商品名称" />
+          </el-col>
+        </el-row>
+        <br>
+        <el-row :gutter="20">
+          <el-col :span="8">
+            <label for="subTitle">商品副标题:</label><el-input id="subTitle" v-model="subTitle" placeholder="请输入商品备注" />
+          </el-col>
+        </el-row>
+        <br>
+        <el-row :gutter="20">
+          <el-col :span="8">
+            <label for="summary">商品备注:</label><el-input id="summary" v-model="summary" placeholder="请输入商品备注" />
+          </el-col>
+        </el-row>
+        <br>
+        <el-row :gutter="20">
+          <el-col :span="8">
+            <label for="cateId">选择商品分类:</label><el-input id="cateId" v-model="cateId" placeholder="请选择商品分类" />
+          </el-col>
+        </el-row>
+        <br>
+        <el-row :gutter="20">
+          <el-col :span="8">
+            <label>选择缩略图</label>
+            <el-upload
+              :action="thumbPostUrl"
+              list-type="picture-card"
+              :on-preview="handlePictureCardPreview"
+              :on-remove="handleRemove"
+              :on-change="uploadThumbFile"
+              :multiple="uploadMultiple"
+              name="file"
+            >
+              <i class="el-icon-plus" />
+            </el-upload>
+          </el-col>
+        </el-row>
+        <br>
+        <el-row :gutter="20">
+          <el-col :span="8">
+            <label>选择详情图</label>
+            <el-upload
+              :action="thumbPostUrl"
+              list-type="picture-card"
+              :on-preview="handlePictureCardPreview"
+              :on-remove="handleRemove"
+              :on-change="uploadChange"
+              :multiple="uploadMultiple"
+              name="file"
+            >
+              <i class="el-icon-plus" />
+            </el-upload>
+          </el-col>
+        </el-row>
+      </el-tab-pane>
+      <el-tab-pane label="定价" name="second">
+        <el-row :gutter="20">
+          <el-col :span="8">
+            <label for="basePrice">商品底价:</label><el-input id="basePrice" v-model="basePrice" placeholder="请输入商品备注" />
+          </el-col>
+        </el-row>
+        <br>
+        <el-row :gutter="20">
+          <el-col :span="8">
+            <label for="showPrice">商品标价:</label><el-input id="showPrice" v-model="showPrice" placeholder="请输入商品备注" />
+          </el-col>
+        </el-row>
+        <br>
+        <el-row :gutter="20">
+          <el-col :span="8">
+            <label for="inputPrice">商品成本:</label><el-input id="inputPrice" v-model="inputPrice" placeholder="请输入商品备注" />
+          </el-col>
+        </el-row>
+        <br>
+        <el-row :gutter="20">
+          <el-col :span="8">
+            <label>上架状态</label>
+            <el-radio-group id="status" v-model="status">
+              <el-radio :label="0">下架</el-radio>
+              <el-radio :label="1">上架</el-radio>
+            </el-radio-group>
+          </el-col>
+        </el-row>
+      </el-tab-pane>
+      <el-tab-pane label="角色管理" name="third">
+        <el-row :gutter="20">
+          <el-col :span="8">
+            <el-input v-model="basePrice" placeholder="请输入商品备注" />
+          </el-col>
+          <el-col :span="8">
+            <el-input v-model="basePrice" placeholder="请输入商品备注" />
+          </el-col>
+        </el-row>
+      </el-tab-pane>
+    </el-tabs>
     <el-row :gutter="20">
       <el-col v-show="!showInfoGroup" :span="2">
         <el-button type="primary" @click="switchInputGroups">上一步</el-button>
@@ -130,6 +125,7 @@ export default {
   name: 'AddGoods',
   data() {
     return {
+      activeIndex: 'first',
       showInfoGroup: true,
       dialogImageUrl: '',
       dialogVisible: false,
@@ -220,6 +216,9 @@ export default {
     uploadThumbFile(file, fileList) {
       console.log(fileList)
       this.uploadThumb = fileList
+    },
+    handleTabClick(tab, event) {
+      console.log(tab, event)
     }
   }
 }
