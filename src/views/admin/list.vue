@@ -70,6 +70,12 @@
         prop="status"
       />
       <el-table-column
+        sortable
+        label="超级管理员"
+        width="120"
+        prop="isAdministrator"
+      />
+      <el-table-column
         fixed="right"
         label="操作"
         width="180"

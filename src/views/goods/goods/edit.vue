@@ -1,116 +1,197 @@
 <template>
   <div class="add-category-container">
-    <h2>添加产品</h2>
-    <div v-show="showInfoGroup" id="goods-info-group">
-      <h3>商品摘要</h3>
+    <el-form ref="form" label-width="140px">
+      <el-tabs v-model="activeIndex" @tab-click="handleTabClick">
+        <el-tab-pane label="商品摘要" name="first" class="goods-price-group">
+          <el-row :gutter="20">
+            <el-col :span="5">
+              <el-form-item label="商品货号" prop="type">
+                <el-input v-model="goodsObj.shelvesNo" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="5">
+              <el-form-item label="商品名称" prop="type">
+                <el-input v-model="goodsObj.name" placeholder="请输入商品名称" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="5">
+              <el-form-item label="商品标题" prop="type" placeholder="请输入商品标题">
+                <el-input v-model="goodsObj.title" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="5">
+              <el-form-item label="商品副标题" prop="type">
+                <el-input v-model="goodsObj.subTitle" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="5">
+              <el-form-item label="商品备注" prop="type">
+                <el-input v-model="goodsObj.summary" />
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row :gutter="20">
+            <el-col :span="5">
+              <el-form-item label="选择商品分类" prop="type">
+                <el-select v-model="goodsObj.cateId" placeholder="请选择">
+                  <el-option
+                    v-for="item in goodsCateList"
+                    :key="item.id"
+                    :label="item.cateName"
+                    :value="item.id"
+                  >
+                    <span style="float: left">{{ item.id }}</span>
+                    <span style="float: right; color: #8492a6; font-size: 13px">{{ item.cateName }}</span>
+                  </el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <br>
+          <el-row :gutter="20">
+            <el-col :span="20">
+              <el-form-item label="选择缩略图" prop="type">
+                <el-upload
+                  :file-list="uploadThumb"
+                  :action="thumbPostUrl"
+                  list-type="picture-card"
+                  :on-preview="handlePictureCardPreview"
+                  :on-remove="handleRemove"
+                  :on-change="uploadThumbFile"
+                  :multiple="uploadMultiple"
+                  name="file"
+                >
+                  <i class="el-icon-plus" />
+                </el-upload>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <br>
+          <el-row :gutter="20">
+            <el-col :span="20">
+              <el-form-item label="选择详情图" prop="type">
+                <el-upload
+                  :file-list="uploadFileList"
+                  :action="thumbPostUrl"
+                  list-type="picture-card"
+                  :on-preview="handlePictureCardPreview"
+                  :on-remove="handleRemove"
+                  :on-change="uploadChange"
+                  :multiple="uploadMultiple"
+                  name="file"
+                >
+                  <i class="el-icon-plus" />
+                </el-upload>
+              </el-form-item>
+            </el-col>
+          </el-row>
+        </el-tab-pane>
+        <el-tab-pane label="定价" name="second">
+          <el-row :gutter="20">
+            <el-col :span="5">
+              <el-form-item label="商品底价" prop="type">
+                <el-input v-model="goodsObj.basePrice" placeholder="请输入商品底价" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="5">
+              <el-form-item label="商品标价" prop="type">
+                <el-input v-model="goodsObj.showPrice" placeholder="请输入商品标价" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="5">
+              <el-form-item label="商品成本价" prop="type">
+                <el-input v-model="goodsObj.inputPrice" placeholder="请输入商品成本价" />
+              </el-form-item>
+            </el-col>
+          </el-row>
+        </el-tab-pane>
+        <el-tab-pane label="商品属性" name="third">
+          <el-row :gutter="20">
+            <el-col :span="5">
+              <el-form-item label="库存" prop="type">
+                <el-input v-model="goodsObj.storeCount" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="5">
+              <el-form-item label="体积" prop="type">
+                <el-input v-model="goodsObj.volumetric" placeholder="请输入 长*宽*高(cm)" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="5">
+              <el-form-item label="重量" prop="type">
+                <el-input v-model="goodsObj.weight" />
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row :gutter="20">
+            <el-col :span="5">
+              <el-form-item label="购买成功增加积分" prop="type">
+                <el-input v-model="goodsObj.memberCredit" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="5">
+              <el-form-item label="排序" prop="type">
+                <el-input v-model="goodsObj.sort" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="5">
+              <el-form-item label="商品推荐" prop="type">
+                <el-input v-model="goodsObj.recommendSort" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="5">
+              <el-form-item label="购买成功增加经验值" prop="type">
+                <el-input v-model="goodsObj.experienceCredit" />
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row :gutter="20">
+            <el-col :span="5">
+              <el-form-item prop="date1" label="上架" required>
+                <el-switch v-model="goodsObj.isShelves" active-text="是" inactive-text="否" active-value="1" inactive-value="0" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="5">
+              <el-form-item prop="data2" label="显示">
+                <el-switch v-model="goodsObj.isVisible" active-text="是" inactive-text="否" active-value="1" inactive-value="0" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="5">
+              <el-form-item prop="data2" label="包邮">
+                <el-switch v-model="goodsObj.isNoPostage" active-text="是" inactive-text="否" active-value="1" inactive-value="0" />
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row :gutter="20">
+            <el-col :span="5">
+              <el-form-item prop="data2" label="最新商品">
+                <el-switch v-model="goodsObj.isNew" active-text="是" inactive-text="否" active-value="1" inactive-value="0" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="5">
+              <el-form-item prop="data2" label="特价商品">
+                <el-switch v-model="goodsObj.isSpecialOffer" active-text="是" inactive-text="否" active-value="1" inactive-value="0" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="5">
+              <el-form-item prop="data2" label="热卖商品">
+                <el-switch v-model="goodsObj.isHot" active-text="是" inactive-text="否" active-value="1" inactive-value="0" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="5">
+              <el-form-item prop="data2" label="推荐商品">
+                <el-switch v-model="goodsObj.isRecommend" active-text="是" inactive-text="否" active-value="1" inactive-value="0" />
+              </el-form-item>
+            </el-col>
+          </el-row>
+        </el-tab-pane>
+      </el-tabs>
       <el-row :gutter="20">
         <el-col :span="8">
-          <label for="Name">商品名称:</label><el-input id="Name" v-model="name" placeholder="请输入商品名称" />
+          <el-button type="primary" @click="submit">提交</el-button>
         </el-col>
       </el-row>
-      <br>
-      <el-row :gutter="20">
-        <el-col :span="8">
-          <label for="title">商品标题:</label><el-input id="title" v-model="title" placeholder="请输入商品名称" />
-        </el-col>
-      </el-row>
-      <br>
-      <el-row :gutter="20">
-        <el-col :span="8">
-          <label for="subTitle">商品副标题:</label><el-input id="subTitle" v-model="subTitle" placeholder="请输入商品备注" />
-        </el-col>
-      </el-row>
-      <br>
-      <el-row :gutter="20">
-        <el-col :span="8">
-          <label for="summary">商品备注:</label><el-input id="summary" v-model="summary" placeholder="请输入商品备注" />
-        </el-col>
-      </el-row>
-      <br>
-      <el-row :gutter="20">
-        <el-col :span="8">
-          <label for="cateId">选择商品分类:</label><el-input id="cateId" v-model="cateId" placeholder="请选择商品分类" />
-        </el-col>
-      </el-row>
-      <br>
-      <el-row :gutter="20">
-        <el-col :span="8">
-          <label>选择缩略图</label>
-          <el-upload
-            :action="thumbPostUrl"
-            list-type="picture-card"
-            :on-preview="handlePictureCardPreview"
-            :on-remove="handleRemove"
-            :on-change="uploadThumbFile"
-            :multiple="uploadMultiple"
-            :file-list="uploadThumb"
-            name="file"
-          >
-            <i class="el-icon-plus" />
-          </el-upload>
-        </el-col>
-      </el-row>
-      <br>
-      <el-row :gutter="20">
-        <el-col :span="8">
-          <label>选择详情图</label>
-          <el-upload
-            :action="thumbPostUrl"
-            list-type="picture-card"
-            :on-preview="handlePictureCardPreview"
-            :on-remove="handleRemove"
-            :on-change="uploadChange"
-            :multiple="uploadMultiple"
-            :file-list="uploadFileList"
-            name="file"
-          >
-            <i class="el-icon-plus" />
-          </el-upload>
-        </el-col>
-      </el-row>
-      <br>
-    </div>
-    <div v-show="!showInfoGroup" id="goods-price-group">
-      <el-row :gutter="20">
-        <el-col :span="8">
-          <label for="basePrice">商品底价:</label><el-input id="basePrice" v-model="basePrice" placeholder="请输入商品备注" />
-        </el-col>
-      </el-row>
-      <br>
-      <el-row :gutter="20">
-        <el-col :span="8">
-          <label for="showPrice">商品标价:</label><el-input id="showPrice" v-model="showPrice" placeholder="请输入商品备注" />
-        </el-col>
-      </el-row>
-      <br>
-      <el-row :gutter="20">
-        <el-col :span="8">
-          <label for="inputPrice">商品成本:</label><el-input id="inputPrice" v-model="inputPrice" placeholder="请输入商品备注" />
-        </el-col>
-      </el-row>
-      <br>
-      <el-row :gutter="20">
-        <el-col :span="8">
-          <label>上架状态</label>
-          <el-radio-group id="status" v-model="status">
-            <el-radio :label="0">下架</el-radio>
-            <el-radio :label="1">上架</el-radio>
-          </el-radio-group>
-        </el-col>
-      </el-row>
-      <br>
-    </div>
-    <el-row :gutter="20">
-      <el-col v-show="!showInfoGroup" :span="2">
-        <el-button type="primary" @click="switchInputGroups">上一步</el-button>
-      </el-col>
-      <el-col v-show="showInfoGroup" :span="2">
-        <el-button type="primary" @click="switchInputGroups">下一步</el-button>
-      </el-col>
-      <el-col v-show="!showInfoGroup" :span="8">
-        <el-button type="primary" @click="submit">提交</el-button>
-      </el-col>
-    </el-row>
+    </el-form>
   </div>
 </template>
 
@@ -119,74 +200,48 @@ export default {
   name: 'AddGoods',
   data() {
     return {
-      showInfoGroup: true,
-      dialogImageUrl: '',
-      dialogVisible: false,
-      name: '',
-      cateId: '',
-      summary: '',
-      title: '',
-      subTitle: '',
-      status: 0,
-      basePrice: 0,
-      inputPrice: 0,
-      showPrice: 0,
+      goodsObj: {
+        name: '',
+        cateId: '',
+        summary: '',
+        title: '',
+        subTitle: '',
+        status: 1,
+        basePrice: 0,
+        inputPrice: 0,
+        showPrice: 0,
+        sort: 1,
+        shelvesNo: '00001',
+        storeCount: 100,
+        weight: 1,
+        recommendSort: 1,
+        memberCredit: 50,
+        experienceCredit: 50,
+        /*    */
+        volumetric: '',
+        isShelves: 1,
+        isNoPostage: 0,
+        isVisible: 1,
+        isNew: 1,
+        isSpecialOffer: 0,
+        isHot: 0,
+        isRecommend: 0
+      },
+      /* */
+      goodsCateList: [],
+      thumbPostUrl: 'http://localhost:8081/upload/singleImage',
+      uploadMultiple: true,
       uploadFileList: [], // 详情图 多个
       uploadThumb: [], // 缩略图片
-      uploadMultiple: true,
-      thumbPostUrl: 'http://localhost:8081/upload/singleImage'
+      activeIndex: 'first',
+      dialogImageUrl: '',
+      dialogVisible: false
     }
   },
   watch: {
   },
   created() {
-    // console.log(this.$request.defaults.headers)
-    const id = this.$route.query.id
-    // console.log(id)
-    if (id === undefined || id === 0) {
-      this.$notify({
-        title: '出错了',
-        message: '分类id错误',
-        type: 'error'
-      })
-      this.$router.push({ path: '/goods/category/list', query: { }})
-    }
-    if (id > 0) {
-      this.$request.get('/admin_goods/findone/' + id).then((res) => {
-        res = res.data
-        const data = res.data
-        //  console.log(res)
-
-        if (res.status === 1) {
-          this.name = data.name
-          // console.log(data)
-          this.id = data.id
-          this.cateId = data.cateId
-          this.summary = data.summary
-          this.title = data.title
-          this.subTitle = data.subTitle
-          this.status = data.status
-          this.inputPrice = data.inputPrice
-          this.basePrice = data.basePrice
-          this.showPrice = data.showPrice
-          //  json.decode
-          const images = JSON.parse(data.images)
-          const FileList = []
-          images.forEach(function(item, index) {
-            FileList[index] = { 'url': process.env.VUE_APP_BASE_DOMAIN + item }
-          })
-          // 缩略图
-          const thumbJson = JSON.parse(data.thumb)
-          const thumbFileList = []
-          thumbJson.forEach(function(item, index) {
-            thumbFileList[index] = { 'url': process.env.VUE_APP_BASE_DOMAIN + item }
-          })
-          this.uploadFileList = FileList
-
-          this.uploadThumb = thumbFileList
-        }
-      })
-    }
+    this.init()
   },
   mounted() {
   },
@@ -194,11 +249,41 @@ export default {
     // window.removeEventListener('storage', this.afterQRScan)
   },
   methods: {
-    switchInputGroups() {
-      if (this.showInfoGroup === true) {
-        this.showInfoGroup = false
-      } else {
-        this.showInfoGroup = true
+    init() {
+      const id = this.$route.query.id
+      if (id === undefined || id === 0) {
+        this.$notify({
+          title: '出错了',
+          message: '分类id错误',
+          type: 'error'
+        })
+        this.$router.push({ path: '/goods/category/list', query: { }})
+      }
+      if (id > 0) {
+        this.$request.get('/admin_goods/findoneWithAllGoodsCate/' + id).then((res) => {
+          res = res.data
+          const data = res.data
+          if (res.status === 1) {
+            this.goodsObj = data.goods
+            this.goodsCateList = data.goodsCategoryList
+            //  json.decode
+            const images = JSON.parse(this.goodsObj.images)
+            const FileList = []
+            images.forEach(function(item, index) {
+              FileList[index] = { 'url': process.env.VUE_APP_BASE_DOMAIN + item }
+            })
+            // 缩略图
+            const thumbJson = JSON.parse(this.goodsObj.thumb)
+            const thumbFileList = []
+            thumbJson.forEach(function(item, index) {
+              thumbFileList[index] = { 'url': process.env.VUE_APP_BASE_DOMAIN + item }
+            })
+            this.uploadFileList = FileList
+            this.uploadThumb = thumbFileList
+            this.goodsObj.isNoPostage = true
+            console.table(this.goodsObj)
+          }
+        })
       }
     },
     submit() {
@@ -257,6 +342,9 @@ export default {
       console.log(fileList)
       this.uploadThumb = fileList
       console.log(this.uploadThumb)
+    },
+    handleTabClick(tab, event) {
+      console.log(tab, event)
     }
   }
 }
@@ -266,77 +354,8 @@ export default {
 </style>
 
 <style lang="scss" scoped>
-  $bg:#2d3a4b;
-  $dark_gray:#889aa4;
-  $light_gray:#eee;
 
-  .login-container {
-    min-height: 100%;
-    width: 100%;
-    background-color: $bg;
-    overflow: hidden;
-
-    .login-form {
-      position: relative;
-      width: 520px;
-      max-width: 100%;
-      padding: 160px 35px 0;
-      margin: 0 auto;
-      overflow: hidden;
-    }
-
-    .tips {
-      font-size: 14px;
-      color: #fff;
-      margin-bottom: 10px;
-
-      span {
-        &:first-of-type {
-          margin-right: 16px;
-        }
-      }
-    }
-
-    .svg-container {
-      padding: 6px 5px 6px 15px;
-      color: $dark_gray;
-      vertical-align: middle;
-      width: 30px;
-      display: inline-block;
-    }
-
-    .title-container {
-      position: relative;
-
-      .title {
-        font-size: 26px;
-        color: $light_gray;
-        margin: 0 auto 40px auto;
-        text-align: center;
-        font-weight: bold;
-      }
-    }
-
-    .show-pwd {
-      position: absolute;
-      right: 10px;
-      top: 7px;
-      font-size: 16px;
-      color: $dark_gray;
-      cursor: pointer;
-      user-select: none;
-    }
-
-    .thirdparty-button {
-      position: absolute;
-      right: 0;
-      bottom: 6px;
-    }
-
-    @media only screen and (max-width: 470px) {
-      .thirdparty-button {
-        display: none;
-      }
-    }
-  }
+.el-upload-list__item{
+  float: left;
+}
 </style>
