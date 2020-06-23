@@ -26,3 +26,11 @@ export function logout() {
     method: 'post'
   })
 }
+
+export function exchangeToken(token) {
+  return request({
+    url: '/admin/exchangeToken',
+    method: 'post',
+    params: { token }
+  })
+}

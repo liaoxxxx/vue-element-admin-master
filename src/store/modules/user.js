@@ -1,5 +1,5 @@
-import { login, logout, getInfo } from '@/api/user'
-import { getToken, setToken, removeToken } from '@/utils/auth'
+import { exchangeToken, getInfo, login, logout } from '@/api/user'
+import { getToken, removeToken, setToken } from '@/utils/auth'
 import router, { resetRouter } from '@/router'
 
 const state = {
@@ -48,8 +48,18 @@ const actions = {
   getInfo({ commit, state }) {
     return new Promise((resolve, reject) => {
       getInfo(state.token).then(response => {
-        const { data } = response.data
-
+        let { data } = response.data
+        console.log(response.data)
+        // if local's token is expired
+        if (data.success === 'error' && data.errorCode === 'jwt001') {
+          const token = getToken()
+          exchangeToken(token).then(response => {
+            data = response.data
+            console.log(data)
+          }).catch(error => {
+            reject(error)
+          })
+        }
         if (!data) {
           reject('Verification failed, please Login again.')
         }

@@ -263,6 +263,31 @@ export const asyncRoutes = [
             meta: { title: '编辑分类' }
           }
         ]
+      }, {
+        path: 'brand',
+        name: 'Brand',
+        component: () => import('@/views/goods/index'),
+        meta: { title: '商品品牌', icon: 'set' },
+        children: [
+          {
+            path: 'list',
+            component: () => import('@/views/goods/brand/list'),
+            name: 'list',
+            meta: { title: '品牌列表' }
+          },
+          {
+            path: 'add',
+            component: () => import('@/views/goods/brand/add'),
+            name: 'add',
+            meta: { title: '添加品牌' }
+          },
+          {
+            path: 'edit',
+            component: () => import('@/views/goods/brand/edit'),
+            name: 'edit',
+            meta: { title: '编辑品牌' }
+          }
+        ]
       }
     ]
 
